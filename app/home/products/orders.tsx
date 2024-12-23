@@ -4,7 +4,8 @@ import {
   Image, 
   View,
   Button, 
-  StyleSheet
+  StyleSheet,
+  FlatList
   } from 'react-native';
 
 import { CartContext } from '../../../CartContext';
@@ -12,40 +13,48 @@ import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 
 export default function ProductDetails({route}:any) {
-  const { productId } = useLocalSearchParams();
+  const { orderId } = useLocalSearchParams();
   const [data,setData] = useState(Object);
-  const [count,setCount] = useState(1);
   const nav = useNavigation();
   
   const res = async() => {
     const query = `
-    query data($id: ID!){getProductById(id: $id) {
+    query data($orderId: String!){getOrder(userId: $orderId) {
           id
-          name
-          price
-          description
-          category
-          stock
-          imageUrl
+          products{
+              name
+          }
+          total
       }}`
     // const t = await fetch('https://ecommerce-fypz.onrender.com',{
-      const t = await fetch('http://localhost:3000',{
+      fetch('http://localhost:3000',{
           method: 'POST',
           headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({query:query,variables:{id:productId}})
-      })
-      var response = await t.json()
-      console.log(response)
+          body: JSON.stringify({query:query,variables:{orderId}})
+      }).then((res) => res.json()).then((res) => {
+      // console.log(res)
       // router.back()
       // nav.preload
-      setData(response.data.getProductById)
+      setData(res.data.getOrder)
+      }).catch((e) => console.log(e));
   }
-
   
   useEffect(()=>{
     res()
   },[])
-  
+
+  function renderItem({item}:any) {
+      const prd = item.products
+      console.log(item)
+      // for( var i = 0; i < prd.length;i++){
+        return (
+          <View style={styles.cartLine}>
+              <Text style={styles.lineLeft}>{item.name} </Text>
+              {/* <Text style={styles.lineRight}>$ {item.price * item.productTotal}</Text> */}
+          </View>
+        );
+      // }
+    }
   
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -55,22 +64,43 @@ export default function ProductDetails({route}:any) {
                     style={styles.reactLogo}
                 />
                 }>
-        <Image
-          style={styles.image}
-          // source={data.imageUrl}
-          source={{uri: data.imageUrl}}
-        />
-        <View style={styles.infoContainer}>
-          <Text style={styles.name}>{data.name}</Text>
-          <Text style={styles.price}>$ {data.price}</Text>
-          <Text style={styles.description}>{data.description}</Text>
-            
-        </View>
+        <FlatList
+              style={styles.itemsList}
+              contentContainerStyle={styles.itemsListContainer}
+              data={data.products}
+              renderItem={renderItem}
+              // keyExtractor={(item) => item.product.name.toString()}
+              // ListFooterComponent={Totals}
+            />
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  cartLine: { 
+    flexDirection: 'row',
+  },
+  lineLeft: {
+    fontSize: 20, 
+    lineHeight: 40, 
+    color:'#333333' 
+  },
+  lineRight: { 
+    flex: 1,
+    fontSize: 20, 
+    fontWeight: 'bold',
+    lineHeight: 40, 
+    color:'#333333', 
+    textAlign:'right',
+  },
+  itemsList: {
+    backgroundColor: '#eeeeee',
+  },
+  itemsListContainer: {
+    backgroundColor: '#eeeeee',
+    paddingVertical: 8,
+    marginHorizontal: 8,
+  },
   reactLogo: {
     height: 178,
     width: 290,

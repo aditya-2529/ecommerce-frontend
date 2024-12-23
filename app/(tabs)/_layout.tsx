@@ -12,13 +12,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function TabLayout() {
-  const [isLogged,setIsLogged] = useState<String | null>(null);
+  // const [isLogged,setIsLogged] = useState<String | null>(null);
 
   const colorScheme = useColorScheme();
   // const isLoggedin = localStorage.getItem('MY_APP_STATE');
-  AsyncStorage.getItem('MY_APP_STATE').then((res) => {setIsLogged(res)}).catch((e) => console.log(e));
+  // AsyncStorage.getItem('MY_APP_STATE').then((res) => {setIsLogged(res)}).catch((e) => console.log(e));
   // const isLoggedin = getLoginInfo();
-  if(isLogged === null ){
+  // if(isLogged === null ){
     return (
       <Tabs
         screenOptions={{
@@ -50,9 +50,9 @@ export default function TabLayout() {
         />
       </Tabs>
     );
-  }
-  else{
-    return (<Redirect href={'/home'} />)
-    // router.navigate('/home')
-  }
+  // }
+  // else{
+  //   return (<Redirect href={'/home'} />)
+  //   // router.navigate('/home')
+  // }
 }

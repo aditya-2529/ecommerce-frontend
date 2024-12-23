@@ -3,8 +3,13 @@ import { FlatList, Image, StyleSheet } from 'react-native';
 
 import { Product } from '../../components/Product';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { router } from 'expo-router';
-import { Button } from '@rneui/themed';
+import { Redirect, router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+var name = '';
+AsyncStorage.getItem('MY_USER_INFO').then((res) => {
+  name = JSON.parse(res);
+}).catch((e) => console.log(e));
 
 export default function ProductsList () {
 
@@ -43,8 +48,8 @@ export default function ProductsList () {
             stock
             imageUrl
         }}`
-    const t = await fetch('https://ecommerce-fypz.onrender.com',{
-        // const t = await fetch('http://localhost:3000',{
+    // const t = await fetch('https://ecommerce-fypz.onrender.com',{
+        const t = await fetch('http://localhost:3000',{
             method: 'POST',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({query:query})
@@ -58,9 +63,7 @@ export default function ProductsList () {
   useEffect(() => {
     if(data!==null){setProducts(data);}
   });
-
-  
-  
+  if(name !== null){
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
             headerImage={
@@ -78,6 +81,12 @@ export default function ProductsList () {
     />
     </ParallaxScrollView>
   );
+  }
+  else {
+    return (
+      <Redirect href='/'/>
+    )
+  }
 }
 
 const styles = StyleSheet.create({

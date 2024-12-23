@@ -32,13 +32,20 @@ export default function Profile() {
         
       </View>
       <View style={styles.infoContainer}>
-              <Text style={styles.box}>Orders</Text>
+              <Text style={styles.box} onPress={() => {
+                // console.log(name)
+                router.push({
+                  params: {orderId:name.id},
+                  pathname: '/home/products/orders',
+                })
+              }}>Orders</Text>
               <Text style={styles.box} onPress={() => {
                 // localStorage.removeItem("MY_APP_STATE");
                 // localStorage.removeItem("MY_USER_INFO");
                 AsyncStorage.clear()
                 // location.reload()
                 router.navigate('/')
+              
                 // nav.navigate('/home')
               }}>Logout</Text>
         </View>

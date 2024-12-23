@@ -64,9 +64,9 @@ export function Product({id, name, price, imageUrl, onPress}) {
           }  
     
         `
-        fetch('https://ecommerce-fypz.onrender.com',{
+        // fetch('https://ecommerce-fypz.onrender.com',{
 
-          //   // fetch('http://localhost:3000/', {
+            fetch('http://localhost:3000/', {
               method: 'POST',
               body: JSON.stringify({
                 query: query,

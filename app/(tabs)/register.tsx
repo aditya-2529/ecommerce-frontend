@@ -65,8 +65,8 @@ const RegisterScreen = (props: { navigation: { navigate: (arg0: string) => void;
 
     `
 
-    fetch('https://ecommerce-fypz.onrender.com',{
-    // fetch('http://localhost:3000', {
+    // fetch('https://ecommerce-fypz.onrender.com',{
+    fetch('http://localhost:3000', {
       method: 'POST',
       body: JSON.stringify({
         query:query,
@@ -94,15 +94,28 @@ const RegisterScreen = (props: { navigation: { navigate: (arg0: string) => void;
             }
           `
           
-          fetch('https://ecommerce-fypz.onrender.com',{
+          // fetch('https://ecommerce-fypz.onrender.com',{
 
-            // const t2 = await fetch('http://localhost:3000',{
+            const t2 = fetch('http://localhost:3000',{
               method: 'POST',
               headers: {'Content-Type':'application/json'},
               body: JSON.stringify({query:query2,variables: {userId:String(responseJson.data.register.id)}})
             }).then((res) => res.json())
             .then((res) => {
             console.log(res)
+            const q3 = `
+              mutation data($id: String, $cartId: String!){
+                setCartToUser(id: $id,cartId: $cartId){
+                  id
+                  cartId
+                }
+              }
+            `
+            fetch('http://localhost:3000',{
+              method: 'POST',
+              headers: {'Content-Type':'application/json'},
+              body: JSON.stringify({query:query2,variables: {userId:String(responseJson.data.register.id)}})
+            }).then((res) => res.json()).then((res) => console.log(res)).catch((e) => console.log(e))
     }).catch((e) => console.log(e))
   }
         // location.href = '/'

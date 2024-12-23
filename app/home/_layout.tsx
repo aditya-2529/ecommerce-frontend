@@ -17,7 +17,7 @@ export default function TabLayout() {
   AsyncStorage.getItem('MY_APP_STATE').then((res) => {setIsLogged(res)}).catch((e) => console.log(e));
   // console.log(Boolean(isLogged) === true)
   // const isLoggedin = localStorage.getItem('MY_APP_STATE');
-  if(Boolean(isLogged)){
+  // if(Boolean(isLogged)){
     return (
       <Tabs
         screenOptions={{
@@ -71,7 +71,7 @@ export default function TabLayout() {
         />
       </Tabs>
     );
-  } 
+  // } 
   // else if(!Boolean(isLogged)) {
   //   router.navigate('/')
   // }

@@ -1,10 +1,15 @@
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router, useNavigation, useRouter } from "expo-router";
+import { Redirect, router, useNavigation, useRouter } from "expo-router";
 import { createRef, useState } from "react";
 import { Image, Keyboard, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 // import { ScrollView } from "react-native-gesture-handler";
+
+var name = '';
+AsyncStorage.getItem('MY_USER_INFO').then((res) => {
+  name = JSON.parse(res);
+}).catch((e) => console.log(e));
 
 export default function Login() {
   const [userEmail, setUserEmail] = useState('');
@@ -41,8 +46,8 @@ export default function Login() {
         }  
     }
     `
-    // fetch('http://localhost:3000/', {
-    fetch('https://ecommerce-fypz.onrender.com',{
+    fetch('http://localhost:3000/', {
+    // fetch('https://ecommerce-fypz.onrender.com',{
       method: 'POST',
       body: JSON.stringify({
         query: query,
@@ -62,9 +67,10 @@ export default function Login() {
           // localStorage.setItem('MY_APP_STATE', JSON.stringify(true));
           // localStorage.setItem('MY_USER_INFO',JSON.stringify(d.data.login));
           AsyncStorage.setItem('MY_APP_STATE', JSON.stringify(true))
-          AsyncStorage.setItem('MY_USER_INFO',JSON.stringify(d.data.login))
+          AsyncStorage.setItem('MY_USER_INFO',JSON.stringify(d.data.login)).then((res) => {
           // location.href = '/home'
           router.navigate('/home')
+          }).catch((e) => console.log(e))
           // nav('/')
           // nav.push({
           //   pathname: '/'
@@ -79,6 +85,8 @@ export default function Login() {
         console.error(error);
       });
   };
+
+  if( name === null){
   return (
     <ParallaxScrollView
           headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -157,7 +165,7 @@ export default function Login() {
             </TouchableOpacity>
             <Text
               style={styles.registerTextStyle}
-              onPress={() => location.href = '/register'}
+              onPress={() => router.navigate('/register')}
               >
                Register
             </Text>
@@ -167,7 +175,13 @@ export default function Login() {
     </View>
     </ParallaxScrollView>
   );
-};
+}
+else {
+  return (
+    <Redirect href='/home'/>
+  )
+}
+}
 
 export const loginInfo = async() => {
   return await AsyncStorage.getItem('MY_USER_INFO')

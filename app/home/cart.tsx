@@ -5,13 +5,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { Product } from '@/components/Product';
 var userInfo = {}
-
+var totalP = 0;
 AsyncStorage.getItem('MY_USER_INFO').then((res) => {userInfo = JSON.parse(res)}).catch((e) => console.log(e));
 export default function Cart ({navigation}:any) {
   const [cart,setCart] = useState(Object);
   const [total,setTotal] = useState(0);
   const [productTotal,setProducttotal] = useState(0);
-  const [totalPrice,setTotalPrice] = useState(0);
 
 
    
@@ -36,17 +35,17 @@ export default function Cart ({navigation}:any) {
           }
         }
       `
-    const t = await fetch('https://ecommerce-fypz.onrender.com',{
-      // const t = await fetch('http://localhost:3000',{
+    // const t = await fetch('https://ecommerce-fypz.onrender.com',{
+      const t = await fetch('http://localhost:3000',{
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({query:query,variables:{userId:id}})
       })
       var response = await t.json()
-      // console.log(response.data.getCart.products)
-      setCart(response.data.getCart.products[0].product[0])
+      console.log(response.data.getCart.products)
+      setCart(response.data.getCart.products)
       setTotal(response.data.getCart.total)
-      setProducttotal(response.data.getCart.products[0].productTotal)
+      setProducttotal(response.data.getCart.products)
     }
 
 
@@ -62,19 +61,22 @@ export default function Cart ({navigation}:any) {
     return (
        <View style={styles.cartLineTotal}>
           <Text style={[styles.lineLeft, styles.lineTotal]}>Total</Text>
-          {/* <Text style={styles.lineRight}>$ {totalPrice}</Text> */}
+          <Text style={styles.lineRight}>$ {totalP}</Text>
        </View>
     );
   }
 
   function renderItem({item}:any) {
-    // console.log(item)
-    return (
-       <View style={styles.cartLine}>
-          <Text style={styles.lineLeft}>{item.name} x {productTotal}</Text>
-          <Text style={styles.lineRight}>$ {item.price * productTotal}</Text>
-       </View>
-    );
+    const prd = item.product
+    for( var i = 0; i < prd.length;i++){
+      totalP += prd[i].price * item.productTotal
+      return (
+        <View style={styles.cartLine}>
+            <Text style={styles.lineLeft}>{prd[i].name} x {item.productTotal}</Text>
+            <Text style={styles.lineRight}>$ {prd[i].price * item.productTotal}</Text>
+        </View>
+      );
+    }
   }
   return (
     <ParallaxScrollView headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -106,8 +108,8 @@ export default function Cart ({navigation}:any) {
  }  
 
       `
-      fetch('https://ecommerce-fypz.onrender.com',{
-        // const t = await fetch('http://localhost:3000',{
+      // fetch('https://ecommerce-fypz.onrender.com',{
+        fetch('http://localhost:3000',{
           method: 'POST',
           headers: {'Content-Type':'application/json'},
           body: JSON.stringify({query:q,variables:{userId:userInfo.id,productId:cart.name,total:totalPrice.toString(),createdAt:time}})
@@ -121,7 +123,8 @@ export default function Cart ({navigation}:any) {
                 }
              }
           `
-      fetch('https://ecommerce-fypz.onrender.com',{
+        fetch('http://localhost:3000',{
+      // fetch('https://ecommerce-fypz.onrender.com',{
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({query:q1,variables:{id: userInfo.cartId,userId: userInfo.id,productId:"",total:"",productTotal:""}})

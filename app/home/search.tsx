@@ -27,8 +27,8 @@ export default function Search() {
               stock
               imageUrl
           }}`
-    const t = await fetch('https://ecommerce-fypz.onrender.com',{
-          // const t = await fetch('http://localhost:3000',{
+    // const t = await fetch('https://ecommerce-fypz.onrender.com',{
+          const t = await fetch('http://localhost:3000',{
               method: 'POST',
               headers: {'Content-Type':'application/json'},
               body: JSON.stringify({query:query})
